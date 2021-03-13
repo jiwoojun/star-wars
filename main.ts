@@ -2,37 +2,66 @@ namespace SpriteKind {
     export const sidekick = SpriteKind.create()
 }
 controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
-    setActivePlayer((active_player_index + 1) % 2)
+    setActivePlayer(1)
 })
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
-    Luke_Skywalkers_lightsaver = sprites.createProjectileFromSprite(img`
-        . . . . . . . . . . . . . . 9 9 
-        . . . . . . . . . . . . . 9 9 . 
-        . . . . . . . . . . . . 9 9 . . 
-        . . . . . . . . . . . 9 9 . . . 
-        . . . . . . . . . . 9 9 . . . . 
-        . . . . . . . . . 9 9 . . . . . 
-        . . . . . . . . 9 9 . . . . . . 
-        . . . . . . . 9 9 . . . . . . . 
-        . . . . . . 9 9 . . . . . . . . 
-        . . . . . 9 9 . . . . . . . . . 
-        . . . . 9 9 . . . . . . . . . . 
-        . . . 9 9 . . . . . . . . . . . 
-        . . 9 9 . . . . . . . . . . . . 
-        . 9 9 . . . . . . . . . . . . . 
-        d 9 . . . . . . . . . . . . . . 
-        d . . . . . . . . . . . . . . . 
-        `, Luke_Skywalker, 50, 0)
-    yodas_lightsaver = sprites.createProjectileFromSprite(img`
-        . . . . . . 7 7 
-        . . . . . 7 7 . 
-        . . . . 7 7 . . 
-        . . . 7 7 . . . 
-        . . 7 7 . . . . 
-        . 7 7 . . . . . 
-        1 7 . . . . . . 
-        1 . . . . . . . 
-        `, yoda, 50, 0)
+    if (horizontal == 1) {
+        projectile = sprites.createProjectileFromSprite(img`
+            . . . . . . . . . . . . . . 9 9 
+            . . . . . . . . . . . . . 9 9 . 
+            . . . . . . . . . . . . 9 9 . . 
+            . . . . . . . . . . . 9 9 . . . 
+            . . . . . . . . . . 9 9 . . . . 
+            . . . . . . . . . 9 9 . . . . . 
+            . . . . . . . . 9 9 . . . . . . 
+            . . . . . . . 9 9 . . . . . . . 
+            . . . . . . 9 9 . . . . . . . . 
+            . . . . . 9 9 . . . . . . . . . 
+            . . . . 9 9 . . . . . . . . . . 
+            . . . 9 9 . . . . . . . . . . . 
+            . . 9 9 . . . . . . . . . . . . 
+            . 9 9 . . . . . . . . . . . . . 
+            d 9 . . . . . . . . . . . . . . 
+            d . . . . . . . . . . . . . . . 
+            `, Luke_Skywalker, 200, 0)
+        projectile.right = Luke_Skywalker.left
+        projectile.x = Luke_Skywalker.x
+        info.changeScoreBy(1)
+    } else {
+        projectile = sprites.createProjectileFromSprite(img`
+            . . . . . . . . . . . . . . 9 9 
+            . . . . . . . . . . . . . 9 9 . 
+            . . . . . . . . . . . . 9 9 . . 
+            . . . . . . . . . . . 9 9 . . . 
+            . . . . . . . . . . 9 9 . . . . 
+            . . . . . . . . . 9 9 . . . . . 
+            . . . . . . . . 9 9 . . . . . . 
+            . . . . . . . 9 9 . . . . . . . 
+            . . . . . . 9 9 . . . . . . . . 
+            . . . . . 9 9 . . . . . . . . . 
+            . . . . 9 9 . . . . . . . . . . 
+            . . . 9 9 . . . . . . . . . . . 
+            . . 9 9 . . . . . . . . . . . . 
+            . 9 9 . . . . . . . . . . . . . 
+            d 9 . . . . . . . . . . . . . . 
+            d . . . . . . . . . . . . . . . 
+            `, Luke_Skywalker, -200, 0)
+        projectile.left = Luke_Skywalker.right
+        projectile.x = Luke_Skywalker.x
+        projectile = sprites.createProjectileFromSprite(img`
+            . . . . . . 7 7 
+            . . . . . 7 7 . 
+            . . . . 7 7 . . 
+            . . . 7 7 . . . 
+            . . 7 7 . . . . 
+            . 7 7 . . . . . 
+            1 7 . . . . . . 
+            1 . . . . . . . 
+            `, yoda, 50, 50)
+        projectile.left = yoda.right
+        projectile.y = yoda.y
+        info.changeScoreBy(-1)
+    }
 })
 function setActivePlayer (playerID: number) {
     controller.moveSprite(Luke_Skywalker, 0, 0)
@@ -47,9 +76,9 @@ function setActivePlayer (playerID: number) {
     scene.cameraFollowSprite(active_player_sprite)
 }
 let active_player_sprite: Sprite = null
-let yodas_lightsaver: Sprite = null
-let Luke_Skywalkers_lightsaver: Sprite = null
 let active_player_index = 0
+let projectile: Sprite = null
+let horizontal = 0
 let yoda: Sprite = null
 let Luke_Skywalker: Sprite = null
 Luke_Skywalker = sprites.create(img`
@@ -116,3 +145,11 @@ controller.moveSprite(yoda)
 tiles.setTilemap(tilemap`level1`)
 scene.cameraFollowSprite(Luke_Skywalker)
 scene.cameraFollowSprite(yoda)
+info.setScore(0)
+game.onUpdateInterval(50, function () {
+    if (Luke_Skywalker.vx > 0) {
+        horizontal = 1
+    } else if (Luke_Skywalker.vx < 0) {
+        horizontal = -1
+    }
+})
